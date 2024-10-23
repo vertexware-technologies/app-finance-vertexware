@@ -7,14 +7,12 @@ class User {
   String? email;
   String? password;
   String? token;
-  int? role;
   User({
     this.id,
     this.name,
     this.email,
     this.password,
     this.token,
-    this.role,
   });
 
   User copyWith({
@@ -31,7 +29,6 @@ class User {
       email: email ?? this.email,
       password: password ?? this.password,
       token: token ?? this.token,
-      role: role ?? this.role,
     );
   }
 
@@ -42,7 +39,14 @@ class User {
       'email': email,
       'password': password,
       'token': token,
-      'role': role,
+    };
+  }
+
+  Map<String, dynamic> toBody() {
+    return <String, dynamic>{
+      'name': name,
+      'email': email,
+      'password': password,
     };
   }
 
@@ -57,7 +61,6 @@ class User {
       email: map['email'],
       password: map['password'],
       token: map['token'],
-      role: map['role'],
     );
   }
 
@@ -68,7 +71,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, password: $password, token: $token, role: $role)';
+    return 'User(id: $id, name: $name, email: $email, password: $password, token: $token)';
   }
 
   @override
@@ -79,8 +82,7 @@ class User {
         other.name == name &&
         other.email == email &&
         other.password == password &&
-        other.token == token &&
-        other.role == role;
+        other.token == token;
   }
 
   @override
@@ -89,7 +91,6 @@ class User {
         name.hashCode ^
         email.hashCode ^
         password.hashCode ^
-        token.hashCode ^
-        role.hashCode;
+        token.hashCode;
   }
 }
