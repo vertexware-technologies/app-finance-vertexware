@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// lib/views/home_page.dart
 
-import '../controllers/auth_controller.dart';
+import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,18 +10,9 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              Provider.of<AuthController>(context, listen: false).logout();
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          )
-        ],
       ),
       body: const Center(
-        child: Text('Bem-vindo a Home Page!'),
+        child: Text('Bem-vindo ao App!'),
       ),
     );
   }

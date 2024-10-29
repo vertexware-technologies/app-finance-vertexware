@@ -1,7 +1,6 @@
+import 'package:finance_vertexware/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import '../config/app_colors.dart';
 
 class TextFieldWidget extends StatefulWidget {
   final IconData icon;

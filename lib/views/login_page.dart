@@ -1,11 +1,11 @@
+// lib/views/login_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../controllers/auth_controller.dart';
 import '../utils/validators.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/text_field_widget.dart';
-import 'home_page.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -25,13 +25,11 @@ class LoginPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Adicionando a imagem acima dos campos
               Image.asset(
-                '/img/logo.png', // Caminho da imagem
-                width: 100, // Largura da imagem
+                'assets/img/logo.png', // Ajuste o caminho da imagem aqui
+                width: 100,
               ),
-              const SizedBox(
-                  height: 20), // Espaçamento entre a imagem e o próximo campo
+              const SizedBox(height: 20),
               TextFieldWidget(
                 controller: emailController,
                 icon: Icons.email,
@@ -56,12 +54,7 @@ class LoginPage extends StatelessWidget {
                     );
 
                     if (!context.mounted) return;
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const HomePage(),
-                      ),
-                    );
+                    Navigator.pushReplacementNamed(context, '/home');
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

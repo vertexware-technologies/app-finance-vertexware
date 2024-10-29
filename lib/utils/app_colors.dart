@@ -1,3 +1,5 @@
+// lib/utils/app_colors.dart
+
 import 'package:flutter/material.dart';
 
 Map<int, Color> _swatchOpacity = {
@@ -24,8 +26,6 @@ abstract class AppColors {
   static const Color black = Colors.black;
   static const Color error = Colors.redAccent;
   static const Color hoverActive = Color.fromRGBO(114, 106, 180, 1);
-
-  // Novas cores
   static const Color buttonPrimary = Color(0xFFED8D4C);
   static const Color buttonSecondary = Color(0xFF9472FF);
 
