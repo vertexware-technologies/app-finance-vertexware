@@ -64,6 +64,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         onTap: widget.onTap,
         keyboardType: widget.textInputType,
         maxLines: widget.maxLines,
+        style: const TextStyle(color: Colors.white), // Texto digitado em branco
         decoration: InputDecoration(
           prefixIcon: Icon(widget.icon, color: AppColors.primaryDark),
           suffixIcon: widget.isSecret

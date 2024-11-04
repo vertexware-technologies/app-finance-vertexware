@@ -2,6 +2,8 @@
 
 import 'package:finance_vertexware/views/login_page.dart';
 import 'package:finance_vertexware/views/home_page.dart'; // Página inicial a ser criada
+import 'package:finance_vertexware/views/register_page.dart';
+import 'package:finance_vertexware/views/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
@@ -20,11 +22,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthController()),
       ],
       child: MaterialApp(
-        title: 'Meu App',
-        initialRoute: '/login',
+        title: 'Finance - VertexWare',
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/welcome',
         routes: {
+          '/welcome': (context) => const WelcomePage(),
           '/login': (context) => LoginPage(),
-          '/home': (context) => HomePage(),
+          '/register': (context) => RegisterPage(),
+          '/home': (context) => const HomePage(),
         },
       ),
     );
