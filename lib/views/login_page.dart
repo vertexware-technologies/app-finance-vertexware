@@ -1,5 +1,3 @@
-// lib/views/login_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controllers/auth_controller.dart';
@@ -18,6 +16,7 @@ class LoginPage extends StatelessWidget {
     final controller = Provider.of<AuthController>(context, listen: false);
 
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 25, 32, 51), // Fundo azul escuro
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
