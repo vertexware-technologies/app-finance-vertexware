@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final String baseUrl =
-      'http://finance-vertexware.test/api'; // Backend Laravel
+      'https://finance.siriusworks.com.br/api'; // Backend Laravel
 
   // Função de registro
   Future<void> register(String name, String email, String password) async {

@@ -28,7 +28,9 @@ abstract class AppColors {
   static const Color buttonSecondary = Color(0xFF9472FF);
 
   // Cor de fundo
-  static const Color background = Color(0xFF111827);
+  static const Color background = Color(0xFF0F0E11);
+  static const Color backgroundCard =
+      Color(0xFF111827); // Cor de fundo (#111827)
 
   static MaterialColor primarySwatchColor =
       MaterialColor(0xFF726AB4, _swatchOpacity);
