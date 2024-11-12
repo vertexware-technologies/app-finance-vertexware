@@ -1,10 +1,9 @@
-// lib/views/home_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import '../utils/app_colors.dart';
 import '../controllers/auth_controller.dart';
+import '../services/transaction_service.dart';
 
 class Transaction {
   final String title;
@@ -50,8 +49,8 @@ class TransactionController {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  Widget transactionCard(String title, List<Transaction> transactions,
-      IconData icon, VoidCallback onSeeAll) {
+  Widget transactionCard(
+      String title, List<Transaction> transactions, VoidCallback onSeeAll) {
     return Card(
       margin: const EdgeInsets.all(12),
       color: AppColors.backgroundCard,
@@ -67,43 +66,20 @@ class HomePage extends StatelessWidget {
             Text(
               title,
               style: const TextStyle(
-                color: Colors.white,  // Título em branco
-                fontSize: 20,          // Título maior
+                color: AppColors.primaryText,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             ...transactions.map((transaction) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: AppColors.primary.withOpacity(0.2),
-                        child: Icon(icon, color: AppColors.primary),
-                      ),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            transaction.title,
-                            style: const TextStyle(
-                              fontSize: 16,            // Tamanho maior para título da transação
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,     // Título em branco
-                            ),
-                          ),
-                          Text(
-                            'R\$ ${transaction.amount.toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Text(
+                    '${transaction.title}: R\$ ${transaction.amount.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                    ),
                   ),
                 )),
             const SizedBox(height: 12),
@@ -127,6 +103,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Provider.of<AuthController>(context, listen: false);
     final transactionController = TransactionController();
+    final transactionService = TransactionService();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -150,48 +127,61 @@ class HomePage extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          Card(
-            margin: const EdgeInsets.all(12),
-            color: AppColors.backgroundCard,
-            elevation: 5,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.account_balance_wallet,
-                    size: 40,
-                    color: AppColors.primaryText,
+          // Card para exibir saldo com FutureBuilder
+          FutureBuilder<double>(
+            future: transactionService.fetchTotalBalance(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text('Erro: ${snapshot.error}');
+              } else {
+                return Card(
+                  margin: const EdgeInsets.all(12),
+                  color: AppColors.backgroundCard,
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'Saldo',
-                        style: TextStyle(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.account_balance_wallet,
+                          size: 40,
                           color: AppColors.primaryText,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'R\$ 1.234,56',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.green,
+                        const SizedBox(width: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Saldo',
+                              style: TextStyle(
+                                color: AppColors.primaryText,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'R\$ ${snapshot.data!.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
+                );
+              }
+            },
           ),
+          // Grid com Investimento, Receita, e Despesa
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -210,7 +200,6 @@ class HomePage extends StatelessWidget {
           transactionCard(
             'Últimas Transações',
             transactionController.getLatestTransactions(),
-            Icons.pix,
             () {
               // Navegar para todas as transações
             },
@@ -218,7 +207,6 @@ class HomePage extends StatelessWidget {
           transactionCard(
             'Últimos Investimentos',
             transactionController.getLatestInvestments(),
-            Icons.savings,
             () {
               // Navegar para todos os investimentos
             },
@@ -226,7 +214,6 @@ class HomePage extends StatelessWidget {
           transactionCard(
             'Últimas Despesas',
             transactionController.getLatestExpenses(),
-            Icons.remove,
             () {
               // Navegar para todas as despesas
             },
@@ -302,4 +289,17 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-             
+              Text(
+                amount,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: color,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

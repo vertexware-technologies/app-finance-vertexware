@@ -1,33 +1,26 @@
 // lib/controllers/transaction_controller.dart
 
-import '../models/transaction.dart';
+import 'package:finance_vertexware/models/transaction.dart';
 
 class TransactionController {
-  // Mock data for demonstration
-  final List<Transaction> transactions = [
-    Transaction(title: 'Transação 1', amount: 100.0, category: 'general'),
-    Transaction(title: 'Transação 2', amount: 500.0, category: 'investment'),
-    Transaction(title: 'Despesa 1', amount: 50.0, category: 'expense'),
-    Transaction(title: 'Investimento 1', amount: 150.0, category: 'investment'),
-    Transaction(title: 'Despesa 2', amount: 30.0, category: 'expense'),
-    Transaction(title: 'Transação 3', amount: 200.0, category: 'general'),
-  ];
+  // Lista de transações reais
+  final List<Transaction> transactions;
 
+  // Construtor para inicializar o controlador com uma lista de transações
+  TransactionController({required this.transactions});
+
+  // Método para obter as últimas transações
   List<Transaction> getLatestTransactions() {
     return transactions.take(3).toList();
   }
 
+  // Método para obter os últimos investimentos
   List<Transaction> getLatestInvestments() {
-    return transactions
-        .where((tx) => tx.category == 'investment')
-        .take(3)
-        .toList();
+    return transactions.where((tx) => tx.categoryId == 3).take(3).toList();
   }
 
+  // Método para obter as últimas despesas
   List<Transaction> getLatestExpenses() {
-    return transactions
-        .where((tx) => tx.category == 'expense')
-        .take(3)
-        .toList();
+    return transactions.where((tx) => tx.categoryId == 2).take(3).toList();
   }
 }
