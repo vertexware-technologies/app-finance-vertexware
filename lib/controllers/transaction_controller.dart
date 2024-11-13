@@ -1,26 +1,37 @@
-// lib/controllers/transaction_controller.dart
+import 'package:flutter/material.dart';
+import '../services/transaction_service.dart';
 
-import 'package:finance_vertexware/models/transaction.dart';
+class TransactionController extends ChangeNotifier {
+  double _totalBalance = 0.0;
+  double _totalInvestment = 0.0;
+  bool _isLoading = false;
 
-class TransactionController {
-  // Lista de transações reais
-  final List<Transaction> transactions;
+  double get totalBalance => _totalBalance;
+  double get totalInvestment => _totalInvestment;
+  bool get isLoading => _isLoading;
 
-  // Construtor para inicializar o controlador com uma lista de transações
-  TransactionController({required this.transactions});
+  final TransactionService _transactionService = TransactionService();
 
-  // Método para obter as últimas transações
-  List<Transaction> getLatestTransactions() {
-    return transactions.take(3).toList();
-  }
+  // Função para buscar todos os dados de uma vez
+  Future<void> fetchData() async {
+    _isLoading = true;
+    notifyListeners();
 
-  // Método para obter os últimos investimentos
-  List<Transaction> getLatestInvestments() {
-    return transactions.where((tx) => tx.categoryId == 3).take(3).toList();
-  }
+    try {
+      // Fazendo as requisições simultaneamente
+      var results = await Future.wait([
+        _transactionService.fetchTotalBalance(),
+        _transactionService.fetchTotalInvestments(),
+      ]);
 
-  // Método para obter as últimas despesas
-  List<Transaction> getLatestExpenses() {
-    return transactions.where((tx) => tx.categoryId == 2).take(3).toList();
+      // Atribuindo os resultados
+      _totalBalance = results[0];
+      _totalInvestment = results[1];
+    } catch (e) {
+      print('Erro ao buscar dados: $e');
+    }
+
+    _isLoading = false;
+    notifyListeners();
   }
 }

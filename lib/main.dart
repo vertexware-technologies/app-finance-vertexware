@@ -1,3 +1,4 @@
+import 'package:finance_vertexware/controllers/transaction_controller.dart';
 import 'package:finance_vertexware/views/login_page.dart';
 import 'package:finance_vertexware/views/home_page.dart';
 import 'package:finance_vertexware/views/register_page.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthController()),
+        ChangeNotifierProvider(create: (_) => TransactionController()),
       ],
       child: MaterialApp(
         title: 'Finance - VertexWare',

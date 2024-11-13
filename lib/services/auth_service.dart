@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:finance_vertexware/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -6,22 +7,19 @@ class AuthService {
   final String baseUrl =
       'https://finance.siriusworks.com.br/api'; // Backend Laravel
 
-  // Função de registro
-  Future<void> register(String name, String email, String password) async {
+  Future<bool> register(User user) async {
     final response = await http.post(
       Uri.parse('$baseUrl/register'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'name': name,
-        'email': email,
-        'password': password,
-      }),
+      body: jsonEncode(user.toJson()),
     );
 
     if (response.statusCode == 201) {
       print('Usuário registrado com sucesso');
+      return true;
     } else {
-      throw Exception('Erro ao registrar usuário');
+      print('Erro ao registrar usuário: ${response.body}');
+      return false;
     }
   }
 
