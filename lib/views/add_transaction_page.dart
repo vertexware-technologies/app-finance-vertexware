@@ -1,7 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:finance_vertexware/controllers/transaction_controller.dart';
 import 'package:finance_vertexware/utils/app_colors.dart';
-import 'package:finance_vertexware/services/transaction_service.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AddTransactionPage extends StatefulWidget {
@@ -14,20 +13,20 @@ class AddTransactionPage extends StatefulWidget {
 class _AddTransactionPageState extends State<AddTransactionPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
   String? _selectedCategory;
   String? _selectedAccountType;
-  double? _amount;
   DateTime? _transactionDate;
   String? _paymentMethod;
-
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    Provider.of<TransactionController>(context, listen: false).loadCategories();
-    Provider.of<TransactionController>(context, listen: false)
-        .loadAccountTypes();
+    final transactionController =
+        Provider.of<TransactionController>(context, listen: false);
+    transactionController.loadCategories();
+    transactionController.loadAccountTypes();
   }
 
   @override
@@ -40,9 +39,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         title: const Text('Adicionar Transação'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       backgroundColor: AppColors.background,
@@ -50,188 +47,199 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Seleção de Categoria
-              transactionController.isLoadingCategories
-                  ? const Center(child: CircularProgressIndicator())
-                  : DropdownButtonFormField<String>(
-                      value: _selectedCategory,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedCategory = value;
-                        });
-                      },
-                      items: transactionController.categories
-                          .map((category) => DropdownMenuItem<String>(
-                                value: category['id'].toString(),
-                                child: Text(category['name']),
-                              ))
-                          .toList(),
-                      decoration: const InputDecoration(
-                        labelText: 'Categoria',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value == null ? 'Selecione uma categoria' : null,
-                    ),
-              const SizedBox(height: 16),
-
-              // Seleção de Tipo de Conta
-              transactionController.isLoadingAccountTypes
-                  ? const Center(child: CircularProgressIndicator())
-                  : DropdownButtonFormField<String>(
-                      value: _selectedAccountType,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedAccountType = value;
-                        });
-                      },
-                      items: transactionController.accountTypes
-                          .map((accountType) => DropdownMenuItem<String>(
-                                value: accountType['id'].toString(),
-                                child: Text(accountType['name']),
-                              ))
-                          .toList(),
-                      decoration: const InputDecoration(
-                        labelText: 'Tipo de Conta',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value == null ? 'Selecione um tipo de conta' : null,
-                    ),
-              const SizedBox(height: 16),
-
-              // Campo de Descrição
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descrição',
-                  border: OutlineInputBorder(),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDropdownField(
+                  label: 'Categoria',
+                  value: _selectedCategory,
+                  items: transactionController.categories,
+                  isLoading: transactionController.isLoadingCategories,
+                  onChanged: (value) =>
+                      setState(() => _selectedCategory = value),
+                  validator: (value) =>
+                      value == null ? 'Selecione uma categoria' : null,
                 ),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Insira uma descrição'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-
-              // Campo de Valor
-              TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Valor',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                _buildDropdownField(
+                  label: 'Tipo de Conta',
+                  value: _selectedAccountType,
+                  items: transactionController.accountTypes,
+                  isLoading: transactionController.isLoadingAccountTypes,
+                  onChanged: (value) =>
+                      setState(() => _selectedAccountType = value),
+                  validator: (value) =>
+                      value == null ? 'Selecione um tipo de conta' : null,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Insira um valor';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Valor inválido';
-                  }
-                  _amount = double.tryParse(value);
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Campo de Data
-              TextFormField(
-                readOnly: true,
-                controller: TextEditingController(
-                    text: _transactionDate != null
-                        ? _transactionDate!.toLocal().toString().split(' ')[0]
-                        : ''),
-                decoration: const InputDecoration(
-                  labelText: 'Data',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                _buildTextField(
+                  controller: _descriptionController,
+                  label: 'Descrição',
+                  validator: (value) =>
+                      value!.isEmpty ? 'Por favor, insira uma descrição' : null,
                 ),
-                onTap: () async {
-                  final DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime(2101),
-                  );
-                  if (pickedDate != null && pickedDate != _transactionDate)
-                    setState(() {
-                      _transactionDate = pickedDate;
-                    });
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Seleção de Método de Pagamento
-              DropdownButtonFormField<String>(
-                value: _paymentMethod,
-                onChanged: (value) {
-                  setState(() {
-                    _paymentMethod = value;
-                  });
-                },
-                items: ['Pix', 'Cartão', 'Boleto']
-                    .map((paymentMethod) => DropdownMenuItem<String>(
-                          value: paymentMethod,
-                          child: Text(paymentMethod),
-                        ))
-                    .toList(),
-                decoration: const InputDecoration(
-                  labelText: 'Método de Pagamento',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                _buildTextField(
+                  controller: _amountController,
+                  label: 'Valor',
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Insira um valor';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Valor inválido';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) =>
-                    value == null ? 'Selecione um método de pagamento' : null,
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
+                _buildDatePickerField(
+                  label: 'Data',
+                  selectedDate: _transactionDate,
+                  onDateSelected: (pickedDate) =>
+                      setState(() => _transactionDate = pickedDate),
+                ),
+                const SizedBox(height: 16),
+                _buildDropdownField(
+                  label: 'Método de Pagamento',
+                  value: _paymentMethod,
+                  items: [
+                    {'id': 'Pix', 'name': 'Pix'},
+                    {'id': 'Cartão', 'name': 'Cartão'},
+                    {'id': 'Boleto', 'name': 'Boleto'},
+                  ],
+                  isLoading: false,
+                  onChanged: (value) => setState(() => _paymentMethod = value),
+                  validator: (value) =>
+                      value == null ? 'Selecione um método de pagamento' : null,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _isLoading
+                      ? null
+                      : () async {
+                          if (_formKey.currentState!.validate()) {
+                            setState(() => _isLoading = true);
 
-              // Botão de Adicionar
-              ElevatedButton(
-                onPressed: _isLoading
-                    ? null
-                    : () async {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            _isLoading = true;
-                          });
-
-                          try {
                             final transaction = {
                               'category_id': _selectedCategory,
                               'account_type_id': _selectedAccountType,
                               'description': _descriptionController.text,
-                              'amount': _amount,
+                              'amount': double.parse(_amountController.text),
                               'date': _transactionDate?.toIso8601String(),
                               'payment_method': _paymentMethod,
                             };
 
-                            await transactionController
-                                .addTransaction(transaction);
-
-                            // Sucesso! Voltar para a página inicial
-                            Navigator.pop(context);
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Erro: $e')),
-                            );
-                          } finally {
-                            setState(() {
-                              _isLoading = false;
-                            });
+                            try {
+                              await transactionController
+                                  .addTransaction(transaction);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Transação adicionada!'),
+                                ),
+                              );
+                              Navigator.pop(context);
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Erro ao adicionar: $e'),
+                                ),
+                              );
+                            } finally {
+                              setState(() => _isLoading = false);
+                            }
                           }
-                        }
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Adicionar Transação'),
                 ),
-                child: _isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text('Adicionar Transação'),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildDropdownField({
+    required String label,
+    required String? value,
+    required List<Map<String, dynamic>> items,
+    required bool isLoading,
+    required void Function(String?) onChanged,
+    String? Function(String?)? validator,
+  }) {
+    return isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : DropdownButtonFormField<String>(
+            value: value,
+            decoration: InputDecoration(
+              labelText: label,
+              border: const OutlineInputBorder(),
+            ),
+            items: items
+                .map((item) => DropdownMenuItem<String>(
+                      value: item['id'].toString(),
+                      child: Text(item['name']),
+                    ))
+                .toList(),
+            onChanged: onChanged,
+            validator: validator,
+          );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      validator: validator,
+    );
+  }
+
+  Widget _buildDatePickerField({
+    required String label,
+    required DateTime? selectedDate,
+    required void Function(DateTime) onDateSelected,
+  }) {
+    return TextFormField(
+      readOnly: true,
+      controller: TextEditingController(
+        text: selectedDate != null
+            ? '${selectedDate.day.toString().padLeft(2, '0')}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.year}'
+            : '',
+      ),
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      onTap: () async {
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: selectedDate ?? DateTime.now(),
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2100),
+        );
+
+        if (pickedDate != null) {
+          onDateSelected(pickedDate);
+        }
+      },
+      validator: (value) => selectedDate == null ? 'Selecione uma data' : null,
     );
   }
 }
