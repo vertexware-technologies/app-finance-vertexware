@@ -16,6 +16,7 @@ class TextFieldWidget extends StatefulWidget {
   final bool border;
   final TextInputType? textInputType;
   final int? maxLines;
+  final Color? fillColor; // Novo parâmetro
 
   const TextFieldWidget({
     Key? key,
@@ -32,6 +33,7 @@ class TextFieldWidget extends StatefulWidget {
     this.onSaved,
     this.onTap,
     this.maxLines = 1,
+    this.fillColor, // Adicione aqui
   }) : super(key: key);
 
   @override
@@ -44,7 +46,6 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   void initState() {
     super.initState();
-
     isObscure = widget.isSecret;
   }
 
@@ -82,6 +83,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
           labelText: widget.label,
           labelStyle: const TextStyle(color: AppColors.primaryDark),
           isDense: true,
+          filled: true, // Habilita o preenchimento de fundo
+          fillColor: widget.fillColor ?? Colors.transparent, // Cor do fundo
           border: widget.border
               ? OutlineInputBorder(borderRadius: BorderRadius.circular(18.0))
               : null,
