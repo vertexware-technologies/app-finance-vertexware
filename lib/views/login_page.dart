@@ -1,3 +1,4 @@
+import 'package:finance_vertexware/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controllers/auth_controller.dart';
@@ -16,53 +17,73 @@ class LoginPage extends StatelessWidget {
     final controller = Provider.of<AuthController>(context, listen: false);
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 25, 32, 51), // Fundo azul escuro
+      backgroundColor: AppColors.background, // Fundo preto
       body: Center(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/img/logo.png', // Ajuste o caminho da imagem aqui
-                width: 100,
+                'assets/img/logo-nome.png', // Ajuste o caminho da imagem
+                width: 180,
               ),
               const SizedBox(height: 20),
-              TextFieldWidget(
-                controller: emailController,
-                icon: Icons.email,
-                label: 'Email',
-                validator: emailValidator,
-              ),
-              const SizedBox(height: 10),
-              TextFieldWidget(
-                controller: passwordController,
-                icon: Icons.lock,
-                label: 'Senha',
-                isSecret: true,
-                validator: passwordValidator,
-              ),
-              const SizedBox(height: 20),
-              ButtonWidget(
-                onPressed: () async {
-                  try {
-                    await controller.login(
-                      emailController.text,
-                      passwordController.text,
-                    );
+              const SizedBox(height: 40),
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundCard, // Fundo cinza escuro
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: Column(
+                  children: [
+                    TextFieldWidget(
+                      controller: emailController,
+                      icon: Icons.email,
+                      label: 'Email',
+                      validator: emailValidator,
+                      fillColor: AppColors.background, // Fundo do campo
+                    ),
+                    const SizedBox(height: 10),
+                    TextFieldWidget(
+                      controller: passwordController,
+                      icon: Icons.lock,
+                      label: 'Password',
+                      isSecret: true,
+                      validator: passwordValidator,
+                      fillColor: AppColors.background, // Fundo do campo
+                    ),
+                    const SizedBox(height: 20),
+                    ButtonWidget(
+                      onPressed: () async {
+                        try {
+                          await controller.login(
+                            emailController.text,
+                            passwordController.text,
+                          );
 
-                    if (!context.mounted) return;
-                    Navigator.pushReplacementNamed(context, '/home');
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Erro ao tentar fazer login!"),
+                          if (!context.mounted) return;
+                          Navigator.pushReplacementNamed(context, '/home');
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Erro ao tentar fazer login!"),
+                            ),
+                          );
+                        }
+                      },
+                      child: const Text(
+                        'Entrar',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    );
-                  }
-                },
-                child: const Text('Login'),
+                      color: AppColors.buttonPrimary, // Cor do botão
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

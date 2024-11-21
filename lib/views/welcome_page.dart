@@ -20,12 +20,12 @@ class WelcomePage extends StatelessWidget {
             ),
             const SizedBox(height: 50),
             const Text(
-              'Bem-vindo ao Meu App!',
+              'Bem vindo ao Finance! !',
               style: TextStyle(color: Colors.white, fontSize: 24),
             ),
             const SizedBox(height: 10),
             const Text(
-              'Escolha uma opção para continuar:',
+              'Seu sistema de gerenciamento de finanças pessoal. Está pronto para organizar suas economias?',
               style: TextStyle(color: Colors.white70, fontSize: 18),
             ),
           ],

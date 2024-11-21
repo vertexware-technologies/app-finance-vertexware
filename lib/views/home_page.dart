@@ -1,19 +1,19 @@
-// lib/views/home_page.dart
-
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../utils/app_colors.dart';
-import '../controllers/auth_controller.dart';
-import '../services/transaction_service.dart';
+import '../controllers/transaction_controller.dart';
+import '../controllers/auth_controller.dart'; // Controlador de autenticação
+import 'add_transaction_page.dart';
+import 'login_page.dart'; // Página de login
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Provider.of<AuthController>(context, listen: false);
-    final transactionService = TransactionService();
+    final transactionController = Provider.of<TransactionController>(context);
+    final authController = Provider.of<AuthController>(context); // Autenticação
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -23,70 +23,272 @@ class HomePage extends StatelessWidget {
           'assets/img/logovertical.png',
           height: 40,
         ),
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.background,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(
+              FontAwesomeIcons.signOutAlt,
+              color: AppColors.primary,
+            ),
             onPressed: () async {
-              await controller.logout();
-              if (!context.mounted) return;
-              Navigator.pushReplacementNamed(context, '/login');
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Sair'),
+                  content: const Text('Tem certeza de que deseja sair?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('Cancelar'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Sair'),
+                    ),
+                  ],
+                ),
+              );
+
+              if (confirmed ?? false) {
+                await authController.logout(); // Realiza o logout
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  (route) => false,
+                ); // Redireciona para a página de login
+              }
             },
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                FutureBuilder<double>(
-                  future: transactionService.fetchTotalBalance(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Erro: ${snapshot.error}');
-                    } else {
-                      return _buildCard('Saldo Total', snapshot.data ?? 0.0);
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    );
-  }
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: transactionController.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Card para o Saldo
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF111827),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .spaceBetween, // Para separar o conteúdo
+                      children: [
+                        // Conteúdo do saldo
+                        Row(
+                          children: [
+                            const Icon(
+                              FontAwesomeIcons.wallet,
+                              color: Colors.white,
+                              size: 24.0,
+                            ),
+                            const SizedBox(width: 12.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Saldo',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.0,
+                                  ),
+                                ),
+                                Text(
+                                  'R\$ ${transactionController.totalBalance.toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
 
-  Widget _buildCard(String title, double value) {
-    return Card(
-      color: Colors.white,
-      elevation: 4.0,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              'R\$ ${value.toStringAsFixed(2)}',
-              style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary),
-            ),
-          ],
-        ),
+                        // Botão "Nova Transação"
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddTransactionPage(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(
+                            FontAwesomeIcons.exchangeAlt,
+                            color: Colors.white,
+                            size: 18.0,
+                          ),
+                          label: const Text(
+                            'Nova Transação',
+                            style: TextStyle(
+                              color: Colors.white, // Cor do texto
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.buttonPrimary,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, // Diminui a altura do botão
+                              horizontal: 16.0, // Diminui a largura do botão
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Linha com os Cards de Investimento, Receita e Despesa
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Card para o Investimento
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(16.0),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 4.0),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF111827),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(
+                                    FontAwesomeIcons.piggyBank,
+                                    color: Colors.white,
+                                    size: 18.0,
+                                  ),
+                                  const SizedBox(width: 8.0),
+                                  const Text(
+                                    'Investimento',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8.0),
+                              Text(
+                                'R\$ ${transactionController.totalInvestment.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Card para a Receita
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(16.0),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 4.0),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(color: Colors.white),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(
+                                    FontAwesomeIcons.chartLine,
+                                    color: Colors.green,
+                                    size: 18.0,
+                                  ),
+                                  const SizedBox(width: 8.0),
+                                  const Text(
+                                    'Receita',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 14.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8.0),
+                              Text(
+                                'R\$ ${transactionController.totalIncome.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Card para a Despesa
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(16.0),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 4.0),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(color: Colors.white),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(
+                                    FontAwesomeIcons.chartLine,
+                                    color: Colors.red,
+                                    size: 18.0,
+                                  ),
+                                  const SizedBox(width: 8.0),
+                                  const Text(
+                                    'Despesa',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 14.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8.0),
+                              Text(
+                                'R\$ - ${transactionController.totalExpense.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
       ),
     );
   }
