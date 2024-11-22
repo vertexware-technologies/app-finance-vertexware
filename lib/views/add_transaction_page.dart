@@ -1,3 +1,4 @@
+import 'package:finance_vertexware/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/transaction.dart';
@@ -98,10 +99,22 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
                     try {
                       await controller.addTransaction(newTransaction);
-                      Navigator.of(context).pop();
-                    } catch (e) {
+
+                      // Exibir mensagem de sucesso
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Erro ao adicionar transação')),
+                        const SnackBar(
+                            content: Text('Transação salva com sucesso!')),
+                      );
+
+                      // Redirecionar para a página inicial
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        AppRoutes.home,
+                        (route) => false, // Remove todas as rotas anteriores
+                      );
+                    } catch (e) {
+                      // Exibir mensagem de erro
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Erro ao salvar transação: $e')),
                       );
                     }
                   }

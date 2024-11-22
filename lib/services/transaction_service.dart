@@ -62,12 +62,10 @@ class TransactionService {
     }
   }
 
-  // Método para salvar a transação
   Future<Map<String, dynamic>> addTransaction(Transaction transaction) async {
     String? token = await getToken();
     if (token == null) throw Exception('Token não encontrado');
 
-    // Prepare the request body
     final requestBody = jsonEncode(transaction.toJson());
 
     final response = await http.post(
@@ -79,7 +77,8 @@ class TransactionService {
       body: requestBody,
     );
 
-    if (response.statusCode == 200) {
+    // Tratar códigos de sucesso (200 e 201)
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       return data['data'];
     } else {
