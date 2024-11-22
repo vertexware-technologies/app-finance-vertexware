@@ -1,17 +1,17 @@
 enum PaymentMethod {
-  pix,
-  card,
-  boleto,
+  PIX,
+  CARTAO,
+  BOLETO,
 }
 
 extension PaymentMethodExtension on PaymentMethod {
   String get value {
     switch (this) {
-      case PaymentMethod.pix:
+      case PaymentMethod.PIX:
         return 'pix';
-      case PaymentMethod.card:
-        return 'card';
-      case PaymentMethod.boleto:
+      case PaymentMethod.CARTAO:
+        return 'cartão';
+      case PaymentMethod.BOLETO:
         return 'boleto';
     }
   }

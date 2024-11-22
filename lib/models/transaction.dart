@@ -1,10 +1,12 @@
+import 'package:finance_vertexware/enum/payment_method.dart';
+
 class Transaction {
   final int categoryId;
   final int accountTypeId;
   final String description;
   final double amount;
   final String date;
-  final String paymentMethod;
+  final PaymentMethod paymentMethod;
 
   Transaction({
     required this.categoryId,
@@ -22,7 +24,7 @@ class Transaction {
       'description': description,
       'amount': amount,
       'date': date,
-      'payment_method': paymentMethod,
+      'payment_method': paymentMethod.value.toLowerCase(),
     };
   }
 }

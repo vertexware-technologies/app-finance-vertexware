@@ -4,8 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final String baseUrl =
-      'https://finance.siriusworks.com.br/api'; // Backend Laravel
+  final String baseUrl = 'https://finance.siriusworks.com.br/api';
 
   Future<bool> register(User user) async {
     final response = await http.post(
@@ -23,7 +22,6 @@ class AuthService {
     }
   }
 
-  // Função de login
   Future<void> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/login'),
@@ -37,10 +35,8 @@ class AuthService {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
 
-      // Acesse o token corretamente
       String token = data['data']['token'];
 
-      // Salvar o token no SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', token);
       print('Login realizado e token armazenado: $token');
@@ -49,7 +45,6 @@ class AuthService {
     }
   }
 
-  // Função de logout
   Future<void> logout() async {
     String? token = await getToken();
     final response = await http.post(
@@ -68,7 +63,6 @@ class AuthService {
     }
   }
 
-  // Obter token do SharedPreferences
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
