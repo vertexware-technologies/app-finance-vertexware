@@ -99,22 +99,19 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
                     try {
                       await controller.addTransaction(newTransaction);
-
-                      // Exibir mensagem de sucesso
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text('Transação salva com sucesso!')),
+                          content: Text('Transação salva com sucesso!'),
+                          backgroundColor: Colors.green,
+                        ),
                       );
-
-                      // Redirecionar para a página inicial
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        AppRoutes.home,
-                        (route) => false, // Remove todas as rotas anteriores
-                      );
+                      Navigator.of(context).pop();
                     } catch (e) {
-                      // Exibir mensagem de erro
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Erro ao salvar transação: $e')),
+                        SnackBar(
+                          content: Text('Erro ao salvar transação: $e'),
+                          backgroundColor: Colors.red,
+                        ),
                       );
                     }
                   }
