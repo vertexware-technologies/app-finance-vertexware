@@ -1,3 +1,4 @@
+import 'package:finance_vertexware/views/transaction_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -77,10 +78,8 @@ class HomePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment
-                          .spaceBetween, // Para separar o conteúdo
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Conteúdo do saldo
                         Row(
                           children: [
                             const Icon(
@@ -111,14 +110,13 @@ class HomePage extends StatelessWidget {
                             ),
                           ],
                         ),
-
-                        // Botão "Nova Transação"
                         ElevatedButton.icon(
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AddTransactionPage(),
+                                builder: (context) =>
+                                    const AddTransactionPage(),
                               ),
                             );
                           },
@@ -129,15 +127,13 @@ class HomePage extends StatelessWidget {
                           ),
                           label: const Text(
                             'Nova Transação',
-                            style: TextStyle(
-                              color: Colors.white, // Cor do texto
-                            ),
+                            style: TextStyle(color: Colors.white),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.buttonPrimary,
                             padding: const EdgeInsets.symmetric(
-                              vertical: 10.0, // Diminui a altura do botão
-                              horizontal: 16.0, // Diminui a largura do botão
+                              vertical: 10.0,
+                              horizontal: 16.0,
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0),
@@ -152,14 +148,14 @@ class HomePage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Card para o Investimento
+                      // Card de Investimento
                       Expanded(
                         child: Container(
                           padding: const EdgeInsets.all(16.0),
                           margin: const EdgeInsets.symmetric(
                               vertical: 8.0, horizontal: 4.0),
                           decoration: BoxDecoration(
-                            color: Color(0xFF111827),
+                            color: const Color(0xFF111827),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           child: Column(
@@ -196,7 +192,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
 
-                      // Card para a Receita
+                      // Card para Receita
                       Expanded(
                         child: Container(
                           padding: const EdgeInsets.all(16.0),
@@ -241,7 +237,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
 
-                      // Card para a Despesa
+                      // Card para Despesa
                       Expanded(
                         child: Container(
                           padding: const EdgeInsets.all(16.0),
@@ -274,7 +270,7 @@ class HomePage extends StatelessWidget {
                               ),
                               const SizedBox(height: 8.0),
                               Text(
-                                'R\$ - ${transactionController.totalExpense.toStringAsFixed(2)}',
+                                'R\$ -${transactionController.totalExpense.toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 20.0,

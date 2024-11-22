@@ -31,10 +31,8 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           scaffoldBackgroundColor: const Color(0xFFF5F5F5),
         ),
-        initialRoute: isLoggedIn
-            ? AppRoutes.home
-            : AppRoutes.welcome, // Usando rotas centralizadas
-        routes: AppRoutes.routes, // Rotas definidas no arquivo separado
+        initialRoute: isLoggedIn ? AppRoutes.home : AppRoutes.welcome,
+        routes: AppRoutes.routes,
       ),
     );
   }
