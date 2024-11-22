@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:finance_vertexware/controllers/auth_controller.dart';
 import 'package:finance_vertexware/controllers/transaction_controller.dart';
 import 'package:finance_vertexware/services/auth_service.dart';
-import 'app_routes.dart'; // Importando as rotas centralizadas
+import 'app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           scaffoldBackgroundColor: const Color(0xFFF5F5F5),
         ),
-        initialRoute: isLoggedIn ? AppRoutes.home : AppRoutes.welcome,
+        initialRoute: isLoggedIn ? AppRoutes.home : AppRoutes.login,
         routes: AppRoutes.routes,
       ),
     );
