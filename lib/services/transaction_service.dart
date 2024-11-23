@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'package:finance_vertexware/models/transaction.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class TransactionService {
   final String baseUrl = 'https://finance.siriusworks.com.br/api';
+  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   // Função para obter o token armazenado
   Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
+    return await _secureStorage.read(key: 'token');
   }
 
   /// Método genérico para obter dados numéricos de endpoints
@@ -56,8 +56,8 @@ class TransactionService {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
-      final List<dynamic> transactions = data['data'];
-      return transactions.map((item) => item as Map<String, dynamic>).toList();
+      final List<dynamic> items = data['data'];
+      return items.map((item) => item as Map<String, dynamic>).toList();
     } else {
       throw Exception('Erro ao acessar $endpoint');
     }
@@ -115,8 +115,8 @@ class TransactionService {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
-      final List<dynamic> accounttype = data['data'];
-      return accounttype.map((item) => item as Map<String, dynamic>).toList();
+      final List<dynamic> categories = data['data'];
+      return categories.map((item) => item as Map<String, dynamic>).toList();
     } else {
       throw Exception('Erro ao buscar categorias: ${response.statusCode}');
     }
