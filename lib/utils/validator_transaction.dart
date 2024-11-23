@@ -1,5 +1,3 @@
-// lib/validators/validator_transaction.dart
-import 'package:flutter/material.dart';
 import 'package:finance_vertexware/enum/payment_method.dart';
 
 String? validateCategory(int? value) {

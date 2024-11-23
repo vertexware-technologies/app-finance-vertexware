@@ -1,4 +1,3 @@
-import 'package:finance_vertexware/app_routes.dart';
 import 'package:finance_vertexware/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
