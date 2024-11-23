@@ -160,8 +160,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                             RegExp(r'^\d+\.?\d*'),
                           ),
                         ],
-                        onChanged: (value) =>
-                            _amount = double.tryParse(value ?? ''),
+                        onChanged: (value) => _amount = double.tryParse(value),
                         validator: (value) =>
                             value == null || double.tryParse(value) == null
                                 ? 'Informe um valor válido'
