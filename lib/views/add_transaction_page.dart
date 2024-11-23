@@ -214,6 +214,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   final newTransaction = Transaction(
                     categoryId: _categoryId!,
                     accountTypeId: _accountTypeId!,
+                    accountTypeName: "",
                     description: _description!,
                     amount: _amount!,
                     date: _selectedDate.toIso8601String().split('T')[0],

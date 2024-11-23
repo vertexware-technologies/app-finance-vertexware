@@ -80,6 +80,7 @@ class ListTransactionPage extends StatelessWidget {
                 categoryId: transaction.categoryId, // Passando o categoryId
                 accountTypeId:
                     transaction.accountTypeId, // Passando o accountTypeId
+                accountTypeName: transaction.accountTypeName,
               );
             },
           );

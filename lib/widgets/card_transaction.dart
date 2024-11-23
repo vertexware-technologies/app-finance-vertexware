@@ -9,8 +9,9 @@ class CardTransaction extends StatelessWidget {
   final String date;
   final double amount;
   final PaymentMethod methodPayment;
-  final int categoryId; // Alterado para usar categoryId diretamente
-  final int accountTypeId; // Adicionando o accountTypeId
+  final int categoryId;
+  final int accountTypeId;
+  final String accountTypeName; // Novo campo para o nome do tipo de conta
 
   const CardTransaction({
     Key? key,
@@ -18,8 +19,9 @@ class CardTransaction extends StatelessWidget {
     required this.date,
     required this.amount,
     required this.methodPayment,
-    required this.categoryId, // Recebe o categoryId
-    required this.accountTypeId, // Recebe o accountTypeId
+    required this.categoryId,
+    required this.accountTypeId,
+    required this.accountTypeName, // Passando accountTypeName
   }) : super(key: key);
 
   // Função para retornar o ícone correspondente ao método de pagamento
@@ -108,13 +110,13 @@ class CardTransaction extends StatelessWidget {
           ),
           const SizedBox(width: 12.0),
 
-          // Exibindo o accountTypeId
+          // Exibindo o accountTypeName
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  accountTypeId.toString(), // Exibe apenas o accountTypeId
+                  accountTypeName, // Exibe o accountTypeName
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16.0,
