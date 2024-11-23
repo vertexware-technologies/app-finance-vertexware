@@ -1,4 +1,4 @@
-import 'package:finance_vertexware/views/transaction_list_page.dart';
+import 'package:finance_vertexware/views/list_transaction_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -281,6 +281,35 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+
+                  // Botão para acessar a listagem de transações
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ListTransactionPage(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Ver Transações',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        backgroundColor: AppColors.buttonPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

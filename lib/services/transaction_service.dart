@@ -55,10 +55,24 @@ class TransactionService {
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((item) => item as Map<String, dynamic>).toList();
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      final List<dynamic> transactions = data['data'];
+      return transactions.map((item) => item as Map<String, dynamic>).toList();
     } else {
       throw Exception('Erro ao acessar $endpoint');
+    }
+  }
+
+  /// Método para buscar transações
+  Future<List<Transaction>> fetchTransactions() async {
+    try {
+      final List<Map<String, dynamic>> transactionsData =
+          await fetchDataList('transactions');
+      return transactionsData
+          .map((transactionData) => Transaction.fromJson(transactionData))
+          .toList();
+    } catch (e) {
+      throw Exception('Erro ao buscar transações: $e');
     }
   }
 
@@ -77,7 +91,6 @@ class TransactionService {
       body: requestBody,
     );
 
-    // Tratar códigos de sucesso (200 e 201)
     if (response.statusCode == 200 || response.statusCode == 201) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       return data['data'];

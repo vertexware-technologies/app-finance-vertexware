@@ -38,11 +38,19 @@ class TransactionController extends ChangeNotifier {
   List<Map<String, dynamic>> get accountTypes => _accountTypes;
   bool get isLoadingAccountTypes => _isLoadingAccountTypes;
 
+  // Lista de transações
+  List<Transaction> _transactions = [];
+  bool _isLoadingTransactions = false;
+
+  List<Transaction> get transactions => _transactions;
+  bool get isLoadingTransactions => _isLoadingTransactions;
+
   // Construtor para inicializar dados
   TransactionController() {
     fetchData(); // Busca os totais (saldo, investimentos, etc.)
     loadCategories(); // Carrega categorias
     loadAccountTypes(); // Carrega tipos de conta
+    loadTransactions(); // Carrega as transações
   }
 
   /// Busca os totais de saldo, investimentos, receitas e despesas
@@ -111,9 +119,26 @@ class TransactionController extends ChangeNotifier {
 
       // Atualiza os totais e listas após adicionar a transação
       await fetchData();
+      await loadTransactions(); // Atualiza a lista de transações após adicionar
     } catch (e) {
       print('Erro ao adicionar transação: $e');
       rethrow; // Repassa o erro para tratamento posterior, se necessário
+    }
+  }
+
+  /// Carrega as últimas transações
+  Future<void> loadTransactions() async {
+    _isLoadingTransactions = true;
+    notifyListeners();
+
+    try {
+      _transactions = await _transactionService.fetchTransactions();
+      print('Transações carregadas: $_transactions');
+    } catch (e) {
+      print('Erro ao carregar transações: $e');
+    } finally {
+      _isLoadingTransactions = false;
+      notifyListeners();
     }
   }
 }
