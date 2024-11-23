@@ -82,6 +82,23 @@ class LoginPage extends StatelessWidget {
                       ),
                       color: AppColors.buttonPrimary, // Cor do botão
                     ),
+                    const SizedBox(
+                        height: 20), // Espaço entre o botão e o texto
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context,
+                            '/register'); // Navegar para a tela de registro
+                      },
+                      child: Text(
+                        'Ainda não está registrado?',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14.0,
+                          decoration:
+                              TextDecoration.underline, // Texto sublinhado
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

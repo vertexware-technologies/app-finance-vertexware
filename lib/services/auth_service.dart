@@ -6,19 +6,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   final String baseUrl = 'https://finance.siriusworks.com.br/api';
 
-  Future<bool> register(User user) async {
+  Future<User?> register(User user, String passwordConfirmation) async {
     final response = await http.post(
       Uri.parse('$baseUrl/register'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(user.toJson()),
+      body: jsonEncode({
+        'name': user.name,
+        'email': user.email,
+        'password': user.password,
+        'password_confirmation': passwordConfirmation,
+      }),
     );
 
-    if (response.statusCode == 201) {
-      print('Usuário registrado com sucesso');
-      return true;
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final responseData = jsonDecode(response.body);
+      if (responseData.containsKey('data') && responseData['data'] != null) {
+        return User.fromJson(responseData['data']);
+      } else {
+        return null; // Retorne null se a API não retornar 'data'
+      }
     } else {
-      print('Erro ao registrar usuário: ${response.body}');
-      return false;
+      // Levantar exceção com o erro retornado pela API
+      throw Exception('Erro ao registrar: ${response.body}');
     }
   }
 
@@ -32,9 +41,8 @@ class AuthService {
       }),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       var data = jsonDecode(response.body);
-
       String token = data['data']['token'];
 
       final prefs = await SharedPreferences.getInstance();

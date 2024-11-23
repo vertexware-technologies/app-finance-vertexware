@@ -1,10 +1,21 @@
-// lib/controllers/auth_controller.dart
-
 import 'package:flutter/material.dart';
+import '../models/user.dart';
 import '../services/auth_service.dart';
 
 class AuthController with ChangeNotifier {
   final AuthService _authService = AuthService();
+  User? _currentUser;
+
+  User? get currentUser => _currentUser;
+
+  Future<void> register(User user, String passwordConfirmation) async {
+    try {
+      _currentUser = await _authService.register(user, passwordConfirmation);
+      notifyListeners();
+    } catch (error) {
+      throw Exception('Erro ao registrar: $error');
+    }
+  }
 
   Future<void> login(String email, String password) async {
     await _authService.login(email, password);
@@ -13,6 +24,7 @@ class AuthController with ChangeNotifier {
 
   Future<void> logout() async {
     await _authService.logout();
+    _currentUser = null;
     notifyListeners();
   }
 }
