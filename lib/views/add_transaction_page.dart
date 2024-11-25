@@ -214,7 +214,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   final newTransaction = Transaction(
                     categoryId: _categoryId!,
                     accountTypeId: _accountTypeId!,
-                    accountTypeName: "",
+                    accountTypeName:
+                        "", // O nome pode ser vazio ou você pode preencher conforme a necessidade
                     description: _description!,
                     amount: _amount!,
                     date: _selectedDate.toIso8601String().split('T')[0],
@@ -222,7 +223,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   );
 
                   try {
-                    await controller.addTransaction(newTransaction);
+                    await controller
+                        .addTransaction(newTransaction); // Agora sem o 'id'
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Transação salva com sucesso!'),

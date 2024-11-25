@@ -11,7 +11,9 @@ class CardTransaction extends StatelessWidget {
   final PaymentMethod methodPayment;
   final int categoryId;
   final int accountTypeId;
-  final String accountTypeName; // Novo campo para o nome do tipo de conta
+  final String accountTypeName;
+  final VoidCallback onDelete; // Callback para excluir transação
+  final VoidCallback onEdit; // Callback para editar transação
 
   const CardTransaction({
     Key? key,
@@ -21,10 +23,11 @@ class CardTransaction extends StatelessWidget {
     required this.methodPayment,
     required this.categoryId,
     required this.accountTypeId,
-    required this.accountTypeName, // Passando accountTypeName
+    required this.accountTypeName,
+    required this.onDelete,
+    required this.onEdit,
   }) : super(key: key);
 
-  // Função para retornar o ícone correspondente ao método de pagamento
   IconData _getIconByPaymentMethod(PaymentMethod method) {
     switch (method) {
       case PaymentMethod.PIX:
@@ -34,38 +37,34 @@ class CardTransaction extends StatelessWidget {
       case PaymentMethod.BOLETO:
         return FontAwesomeIcons.barcode;
       default:
-        return FontAwesomeIcons.questionCircle; // Ícone padrão
+        return FontAwesomeIcons.questionCircle;
     }
   }
 
-  // Função para formatar a data no formato "22 Nov, 2024"
   String _formatDate(String date) {
     try {
       final parsedDate = DateTime.parse(date);
-      final formatter =
-          DateFormat('dd MMM, yyyy', 'en_US'); // Formato com mês abreviado
+      final formatter = DateFormat('dd MMM, yyyy', 'en_US');
       return formatter.format(parsedDate);
     } catch (e) {
-      return date; // Retorna a data original caso ocorra erro
+      return date;
     }
   }
 
-  // Função para determinar o estilo do valor com base no categoryId
   TextStyle _getAmountStyle(int categoryId) {
     switch (categoryId) {
-      case 1: // Receita
+      case 1:
         return const TextStyle(
           color: Colors.green,
           fontSize: 16.0,
           fontWeight: FontWeight.bold,
         );
-      case 2: // Despesa
+      case 2:
         return const TextStyle(
           color: Colors.red,
           fontSize: 16.0,
           fontWeight: FontWeight.bold,
         );
-      case 3: // Investimento
       default:
         return const TextStyle(
           color: Colors.white,
@@ -75,12 +74,11 @@ class CardTransaction extends StatelessWidget {
     }
   }
 
-  // Função para retornar o valor formatado com base no categoryId
   String _getFormattedAmount(double amount, int categoryId) {
     if (categoryId == 2) {
-      return '- R\$ ${amount.toStringAsFixed(2)}'; // Despesa
+      return '- R\$ ${amount.toStringAsFixed(2)}';
     }
-    return 'R\$ ${amount.toStringAsFixed(2)}'; // Receita ou Investimento
+    return 'R\$ ${amount.toStringAsFixed(2)}';
   }
 
   @override
@@ -95,7 +93,6 @@ class CardTransaction extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Ícone do método de pagamento
           Container(
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
@@ -109,14 +106,12 @@ class CardTransaction extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12.0),
-
-          // Exibindo o accountTypeName
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  accountTypeName, // Exibe o accountTypeName
+                  accountTypeName,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16.0,
@@ -125,7 +120,7 @@ class CardTransaction extends StatelessWidget {
                 ),
                 const SizedBox(height: 4.0),
                 Text(
-                  _formatDate(date), // Formata a data
+                  _formatDate(date),
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 14.0,
@@ -134,26 +129,45 @@ class CardTransaction extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(width: 8.0),
-
-          // Valor da transação
           Text(
-            _getFormattedAmount(amount, categoryId), // Valor formatado
-            style: _getAmountStyle(categoryId), // Estilo condicional
+            _getFormattedAmount(amount, categoryId),
+            style: _getAmountStyle(categoryId),
           ),
-
           const SizedBox(width: 8.0),
-
-          // Botão de opções (Editar e Excluir)
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'edit') {
-                // Lógica para editar (implemente depois)
-                print('Editar clicado!');
+                onEdit();
               } else if (value == 'delete') {
-                // Lógica para excluir (implemente depois)
-                print('Excluir clicado!');
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Confirmar exclusão'),
+                      content: const Text(
+                          'Tem certeza de que deseja excluir esta transação?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Cancelar'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            onDelete();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          child: const Text('Excluir'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               }
             },
             icon: const Icon(

@@ -72,15 +72,41 @@ class ListTransactionPage extends StatelessWidget {
             itemBuilder: (context, index) {
               final transaction = controller.transactions[index];
               return CardTransaction(
-                description: transaction
-                    .description, // Caso precise ainda da descrição em algum lugar
+                description: transaction.description,
                 date: transaction.date,
                 amount: transaction.amount,
                 methodPayment: transaction.paymentMethod,
-                categoryId: transaction.categoryId, // Passando o categoryId
+                categoryId:
+                    transaction.categoryId ?? 0, // Caso seja nulo, usa 0
                 accountTypeId:
-                    transaction.accountTypeId, // Passando o accountTypeId
+                    transaction.accountTypeId ?? 0, // Caso seja nulo, usa 0
                 accountTypeName: transaction.accountTypeName,
+                onDelete: () async {
+                  try {
+                    // Exclui a transação
+                    await controller.deleteTransaction(transaction.id ?? 0);
+
+                    // Exibe mensagem de sucesso
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Transação excluída com sucesso!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } catch (e) {
+                    // Exibe mensagem de erro
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content:
+                            Text('Erro ao excluir transação. Tente novamente.'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                onEdit: () {
+                  // Caso queira implementar a edição, adicione lógica aqui
+                },
               );
             },
           );

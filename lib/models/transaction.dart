@@ -1,6 +1,7 @@
 import 'package:finance_vertexware/enum/payment_method.dart';
 
 class Transaction {
+  final int? id;
   final int categoryId;
   final int accountTypeId;
   final String accountTypeName; // Mudamos para String, pois agora é só exibição
@@ -10,6 +11,7 @@ class Transaction {
   final PaymentMethod paymentMethod;
 
   Transaction({
+    this.id,
     required this.categoryId,
     required this.accountTypeId,
     required this.accountTypeName, // Passamos o nome aqui para exibição
@@ -33,10 +35,10 @@ class Transaction {
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
+      id: json['id'],
       categoryId: json['category']['id'], // Extraindo categoria
       accountTypeId: json['account_type']['id'],
-      accountTypeName: json['account_type']
-          ['name'], // Carregando o nome para exibição
+      accountTypeName: json['account_type']['name'],
       description: json['description'],
       amount: double.tryParse(json['amount'].toString()) ?? 0.0,
       date: json['date'],

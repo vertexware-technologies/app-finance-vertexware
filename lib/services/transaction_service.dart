@@ -63,6 +63,23 @@ class TransactionService {
     }
   }
 
+  // Métodos para buscar valores totais
+  Future<double> fetchTotalBalance() async {
+    return fetchData('transactions/total-balance');
+  }
+
+  Future<double> fetchTotalInvestments() async {
+    return fetchData('transactions/total-investments');
+  }
+
+  Future<double> fetchTotalExpenses() async {
+    return fetchData('transactions/total-expenses');
+  }
+
+  Future<double> fetchTotalIncome() async {
+    return fetchData('transactions/total-income');
+  }
+
   /// Método para buscar transações
   Future<List<Transaction>> fetchTransactions() async {
     try {
@@ -143,20 +160,22 @@ class TransactionService {
     }
   }
 
-  // Métodos para buscar valores totais
-  Future<double> fetchTotalBalance() async {
-    return fetchData('transactions/total-balance');
-  }
+  Future<void> deleteTransaction(int transactionId) async {
+    String? token = await getToken();
+    if (token == null) throw Exception('Token não encontrado');
 
-  Future<double> fetchTotalInvestments() async {
-    return fetchData('transactions/total-investments');
-  }
+    final response = await http.delete(
+      Uri.parse(
+          '$baseUrl/transaction/delete/$transactionId'), // Endpoint alterado
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
 
-  Future<double> fetchTotalExpenses() async {
-    return fetchData('transactions/total-expenses');
-  }
-
-  Future<double> fetchTotalIncome() async {
-    return fetchData('transactions/total-income');
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Erro ao excluir transação: ${response.statusCode} - ${response.body}');
+    }
   }
 }
