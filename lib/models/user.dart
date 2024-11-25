@@ -12,9 +12,9 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      name: json['name'],
-      email: json['email'],
-      password: json['password'],
+      name: json['name'] ?? 'Nome não informado',
+      email: json['email'] ?? 'Email não informado',
+      password: '', // O password nunca é retornado pela API
     );
   }
 

@@ -286,27 +286,31 @@ class HomePage extends StatelessWidget {
                   // Botão para acessar a listagem de transações
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ListTransactionPage(),
+                    child: SizedBox(
+                      width: double
+                          .infinity, // Faz o botão ocupar toda a largura disponível
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListTransactionPage(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Ver Todas as Transações',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
                           ),
-                        );
-                      },
-                      child: const Text(
-                        'Ver Transações',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
                         ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        backgroundColor: AppColors.buttonPrimary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          backgroundColor: AppColors.buttonPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
                         ),
                       ),
                     ),

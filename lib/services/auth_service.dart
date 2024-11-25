@@ -7,7 +7,6 @@ class AuthService {
   final String baseUrl = 'https://finance.siriusworks.com.br/api';
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
-  // Registrar um novo usuário
   Future<User?> register(User user, String passwordConfirmation) async {
     final response = await http.post(
       Uri.parse('$baseUrl/register'),
@@ -23,12 +22,24 @@ class AuthService {
     if (response.statusCode == 200 || response.statusCode == 201) {
       final responseData = jsonDecode(response.body);
       if (responseData.containsKey('data') && responseData['data'] != null) {
-        return User.fromJson(responseData['data']);
-      } else {
-        return null; // Retorne null se a API não retornar 'data'
+        // Garantir que nenhum valor seja nulo antes de criar o objeto User
+        final data = responseData['data'];
+        return User(
+          name: data['name'] ?? 'Nome não informado',
+          email: data['email'] ?? 'Email não informado',
+          password: '', // O password nunca é retornado pela API, usamos vazio
+        );
       }
+      return null;
+    } else if (response.statusCode == 422) {
+      final errors =
+          jsonDecode(response.body)['errors'] as Map<String, dynamic>;
+      final errorMessage = errors.values.first.join(', ');
+      throw Exception('Erro de validação: $errorMessage');
     } else {
-      throw Exception('Erro ao registrar: ${response.body}');
+      final errorBody = jsonDecode(response.body);
+      throw Exception(
+          'Erro ao registrar: ${errorBody['message'] ?? 'Erro desconhecido'}');
     }
   }
 

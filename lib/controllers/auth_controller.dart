@@ -7,13 +7,12 @@ class AuthController with ChangeNotifier {
   User? _currentUser;
 
   User? get currentUser => _currentUser;
-
   Future<void> register(User user, String passwordConfirmation) async {
     try {
       _currentUser = await _authService.register(user, passwordConfirmation);
       notifyListeners();
     } catch (error) {
-      throw Exception('Erro ao registrar: $error');
+      rethrow; // Deixa o erro ser tratado no nível da interface
     }
   }
 

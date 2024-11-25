@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../controllers/auth_controller.dart';
 import '../models/user.dart';
 import '../utils/app_colors.dart';
-import '../utils/validators.dart';
+import '../utils/validator_register.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/text_field_widget.dart';
 
@@ -21,7 +21,7 @@ class RegisterPage extends StatelessWidget {
     final controller = Provider.of<AuthController>(context, listen: false);
 
     return Scaffold(
-      backgroundColor: AppColors.background, // Fundo preto
+      backgroundColor: AppColors.background,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -29,15 +29,14 @@ class RegisterPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/img/logo-nome.png', // Ajuste o caminho da imagem
+                'assets/img/logo-nome.png',
                 width: 180,
               ),
-              const SizedBox(height: 20),
               const SizedBox(height: 40),
               Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: AppColors.backgroundCard, // Fundo cinza escuro
+                  color: AppColors.backgroundCard,
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: Column(
@@ -46,16 +45,16 @@ class RegisterPage extends StatelessWidget {
                       controller: nameController,
                       icon: Icons.person,
                       label: 'Nome',
-                      validator: nameValidator,
-                      fillColor: AppColors.background, // Fundo do campo
+                      validator: ValidatorRegister.validateName,
+                      fillColor: AppColors.background,
                     ),
                     const SizedBox(height: 10),
                     TextFieldWidget(
                       controller: emailController,
                       icon: Icons.email,
                       label: 'Email',
-                      validator: emailValidator,
-                      fillColor: AppColors.background, // Fundo do campo
+                      validator: ValidatorRegister.validateEmail,
+                      fillColor: AppColors.background,
                     ),
                     const SizedBox(height: 10),
                     TextFieldWidget(
@@ -63,8 +62,8 @@ class RegisterPage extends StatelessWidget {
                       icon: Icons.lock,
                       label: 'Senha',
                       isSecret: true,
-                      validator: passwordValidator,
-                      fillColor: AppColors.background, // Fundo do campo
+                      validator: ValidatorRegister.validatePassword,
+                      fillColor: AppColors.background,
                     ),
                     const SizedBox(height: 10),
                     TextFieldWidget(
@@ -72,13 +71,12 @@ class RegisterPage extends StatelessWidget {
                       icon: Icons.lock,
                       label: 'Confirmar Senha',
                       isSecret: true,
-                      validator: (value) {
-                        if (value != passwordController.text) {
-                          return 'As senhas não correspondem';
-                        }
-                        return null;
-                      },
-                      fillColor: AppColors.background, // Fundo do campo
+                      validator: (value) =>
+                          ValidatorRegister.validatePasswordConfirmation(
+                        value,
+                        passwordController.text,
+                      ),
+                      fillColor: AppColors.background,
                     ),
                     const SizedBox(height: 20),
                     ButtonWidget(
@@ -97,19 +95,26 @@ class RegisterPage extends StatelessWidget {
 
                           if (!context.mounted) return;
 
-                          // Mensagem de sucesso
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Registro realizado com sucesso!'),
+                              content: Text(
+                                'Registro realizado com sucesso!',
+                                style: TextStyle(color: AppColors.white),
+                              ),
+                              backgroundColor: Colors.green,
+                              behavior: SnackBarBehavior.floating,
+                              duration: Duration(seconds: 3),
                             ),
                           );
 
-                          // Redireciona para a página de login
                           Navigator.pushReplacementNamed(context, '/login');
                         } catch (e) {
+                          final errorMessage =
+                              e.toString().replaceAll('Exception: ', '');
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text("Erro ao tentar registrar: $e"),
+                              content: Text(errorMessage),
+                              backgroundColor: Colors.red,
                             ),
                           );
                         }
@@ -121,7 +126,7 @@ class RegisterPage extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      color: AppColors.buttonPrimary, // Cor do botão
+                      color: AppColors.buttonPrimary,
                     ),
                     const SizedBox(height: 20),
                     GestureDetector(
@@ -133,8 +138,7 @@ class RegisterPage extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.white70,
                           fontSize: 14.0,
-                          decoration:
-                              TextDecoration.underline, // Texto sublinhado
+                          decoration: TextDecoration.underline,
                         ),
                       ),
                     ),
