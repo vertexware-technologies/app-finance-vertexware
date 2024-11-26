@@ -165,15 +165,14 @@ class TransactionService {
     if (token == null) throw Exception('Token não encontrado');
 
     final response = await http.delete(
-      Uri.parse(
-          '$baseUrl/transaction/delete/$transactionId'), // Endpoint alterado
+      Uri.parse('$baseUrl/transaction/delete/$transactionId'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception(
           'Erro ao excluir transação: ${response.statusCode} - ${response.body}');
     }

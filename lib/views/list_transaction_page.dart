@@ -83,7 +83,11 @@ class ListTransactionPage extends StatelessWidget {
                 accountTypeName: transaction.accountTypeName,
                 onDelete: () async {
                   try {
-                    // Exclui a transação
+                    // Remove o item localmente antes de chamar a API
+                    controller.transactions
+                        .removeWhere((item) => item.id == transaction.id);
+
+                    // Chama a API para excluir a transação
                     await controller.deleteTransaction(transaction.id ?? 0);
 
                     // Exibe mensagem de sucesso
@@ -97,13 +101,16 @@ class ListTransactionPage extends StatelessWidget {
                     // Exibe mensagem de erro
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content:
-                            Text('Erro ao excluir transação. Tente novamente.'),
+                        content: Text('Erro ao excluir transação: $e'),
                         backgroundColor: Colors.red,
                       ),
                     );
+
+                    // (Opcional) Caso o backend falhe, recarrega os dados para corrigir
+                    await controller.fetchData();
                   }
                 },
+
                 onEdit: () {
                   // Caso queira implementar a edição, adicione lógica aqui
                 },
