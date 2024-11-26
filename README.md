@@ -1,4 +1,4 @@
-# finance_vertexware
+# novo
 
 A new Flutter project.
 
