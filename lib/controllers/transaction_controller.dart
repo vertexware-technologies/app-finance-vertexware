@@ -142,6 +142,21 @@ class TransactionController extends ChangeNotifier {
     }
   }
 
+  Future<void> editTransaction(Transaction transaction) async {
+    try {
+      // Chama o serviço para atualizar a transação
+      await _transactionService.editTransaction(transaction);
+      print('Transação editada com sucesso: $transaction');
+
+      // Atualiza os totais e a lista de transações após a edição
+      await fetchData();
+      await loadTransactions();
+    } catch (e) {
+      print('Erro ao editar transação: $e');
+      rethrow; // Repassa o erro para tratamento posterior, se necessário
+    }
+  }
+
   Future<void> deleteTransaction(int transactionId) async {
     try {
       await _transactionService.deleteTransaction(transactionId);

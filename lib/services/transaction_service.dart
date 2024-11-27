@@ -160,6 +160,43 @@ class TransactionService {
     }
   }
 
+  Future<void> updateTransaction(Transaction transaction) async {
+    String? token = await getToken();
+    if (token == null) throw Exception('Token não encontrado');
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/transactions/update/${transaction.id}'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(transaction.toJson()),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception(
+          'Erro ao atualizar transação: ${response.statusCode} - ${response.body}');
+    }
+  }
+
+  Future<void> editTransaction(Transaction transaction) async {
+    String? token = await getToken();
+    if (token == null) throw Exception('Token não encontrado');
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/transaction/update/${transaction.id}'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(transaction.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Falha ao editar transação: ${response.body}');
+    }
+  }
+
   Future<void> deleteTransaction(int transactionId) async {
     String? token = await getToken();
     if (token == null) throw Exception('Token não encontrado');

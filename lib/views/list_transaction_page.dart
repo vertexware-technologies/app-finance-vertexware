@@ -1,7 +1,7 @@
 import 'package:novo/views/add_transaction_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:novo/views/home_page.dart';
+import 'package:novo/views/edit_transaction_page.dart';
 import 'package:provider/provider.dart';
 import '../controllers/transaction_controller.dart';
 import '../widgets/card_transaction.dart';
@@ -102,7 +102,13 @@ class ListTransactionPage extends StatelessWidget {
                 },
 
                 onEdit: () {
-                  // Caso queira implementar a edição, adicione lógica aqui
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          EditTransactionPage(transaction: transaction),
+                    ),
+                  );
                 },
               );
             },
