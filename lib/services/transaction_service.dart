@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:novo/controllers/auth_controller.dart';
 import 'package:novo/models/transaction.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -212,6 +213,49 @@ class TransactionService {
     if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception(
           'Erro ao excluir transação: ${response.statusCode} - ${response.body}');
+    }
+  }
+
+  Future<List<Transaction>> fetchTransactionsByCategory(int categoryId) async {
+    String? token = await getToken();
+    if (token == null) throw Exception('Token não encontrado');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/transactions/category/$categoryId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body)['data'];
+      return data.map((e) => Transaction.fromJson(e)).toList();
+    } else {
+      throw Exception(
+          'Erro ao buscar transações por categoria: ${response.statusCode} - ${response.body}');
+    }
+  }
+
+  Future<List<Transaction>> fetchTransactionsByAccountType(
+      int accountTypeId) async {
+    String? token = await getToken();
+    if (token == null) throw Exception('Token não encontrado');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/transactions/account-type/$accountTypeId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body)['data'];
+      return data.map((e) => Transaction.fromJson(e)).toList();
+    } else {
+      throw Exception(
+          'Erro ao buscar transações por tipo de conta: ${response.statusCode} - ${response.body}');
     }
   }
 }

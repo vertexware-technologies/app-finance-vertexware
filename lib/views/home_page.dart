@@ -1,3 +1,4 @@
+import 'package:novo/models/transaction.dart';
 import 'package:novo/views/list_transaction_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -314,6 +315,115 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ),
+
+                  // Lista de Transações por Categoria
+                  const SizedBox(height: 16.0),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
+                    color: AppColors.backgroundCard, // Cor de fundo
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment
+                                .centerLeft, // Alinha o texto à esquerda
+                            child: const Text(
+                              'Últimas Transações por Categoria',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  FutureBuilder<List<Transaction>>(
+                    future: transactionController.getTransactionsByCategory(1),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Erro: ${snapshot.error}'));
+                      }
+                      if (snapshot.data?.isEmpty ?? true) {
+                        return const Text(
+                          'Sem transações nesta categoria.',
+                          style: TextStyle(color: Colors.white),
+                        );
+                      }
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(snapshot.data![index].description),
+                            subtitle:
+                                Text('R\$ ${snapshot.data![index].amount}'),
+                          );
+                        },
+                      );
+                    },
+                  ),
+
+// Lista de Transações por Tipo de Conta
+                  const SizedBox(height: 16.0),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
+                    color: AppColors.backgroundCard, // Cor de fundo
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment
+                                .centerLeft, // Alinha o texto à esquerda
+                            child: const Text(
+                              'Últimas Transações por Tipo de Conta',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  FutureBuilder<List<Transaction>>(
+                    future:
+                        transactionController.getTransactionsByAccountType(1),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Erro: ${snapshot.error}'));
+                      }
+                      if (snapshot.data?.isEmpty ?? true) {
+                        return const Text(
+                          'Sem transações neste tipo de conta.',
+                          style: TextStyle(color: Colors.white),
+                        );
+                      }
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(snapshot.data![index].description),
+                            subtitle:
+                                Text('R\$ ${snapshot.data![index].amount}'),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ],
               ),

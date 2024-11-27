@@ -168,4 +168,24 @@ class TransactionController extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<List<Transaction>> getTransactionsByCategory(int categoryId) async {
+    try {
+      return await _transactionService.fetchTransactionsByCategory(categoryId);
+    } catch (e) {
+      print('Erro ao buscar transações por categoria: $e');
+      return [];
+    }
+  }
+
+  Future<List<Transaction>> getTransactionsByAccountType(
+      int accountTypeId) async {
+    try {
+      return await _transactionService
+          .fetchTransactionsByAccountType(accountTypeId);
+    } catch (e) {
+      print('Erro ao buscar transações por tipo de conta: $e');
+      return [];
+    }
+  }
 }
