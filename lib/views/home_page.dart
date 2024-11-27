@@ -2,6 +2,7 @@ import 'package:novo/models/transaction.dart';
 import 'package:novo/views/list_transaction_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:novo/widgets/card_home_widget.dart';
 import 'package:provider/provider.dart';
 import '../utils/app_colors.dart';
 import '../controllers/transaction_controller.dart';
@@ -317,12 +318,10 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
 
-                  // Lista de Transações por Categoria
                   const SizedBox(height: 16.0),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 16.0),
-                    color: AppColors.backgroundCard, // Cor de fundo
+                        vertical: 8.0, horizontal: 16.0), // Cor de fundo
                     child: Row(
                       children: [
                         Expanded(
@@ -330,7 +329,7 @@ class HomePage extends StatelessWidget {
                             alignment: Alignment
                                 .centerLeft, // Alinha o texto à esquerda
                             child: const Text(
-                              'Últimas Transações por Categoria',
+                              'Últimas Transações - Receitas',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.0,
@@ -343,7 +342,8 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   FutureBuilder<List<Transaction>>(
-                    future: transactionController.getTransactionsByCategory(1),
+                    future: transactionController.getTransactionsByCategory(
+                        1), // ou getTransactionsByAccountType(1)
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -359,12 +359,22 @@ class HomePage extends StatelessWidget {
                       }
                       return ListView.builder(
                         shrinkWrap: true,
+                        physics:
+                            const NeverScrollableScrollPhysics(), // Evita conflito com o scroll da página
                         itemCount: snapshot.data?.length ?? 0,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(snapshot.data![index].description),
-                            subtitle:
-                                Text('R\$ ${snapshot.data![index].amount}'),
+                          final transaction = snapshot.data![index];
+                          return CardHome(
+                            description: transaction.description,
+                            date: transaction.date,
+                            amount: transaction.amount,
+                            methodPayment: transaction.paymentMethod,
+                            categoryId: transaction.categoryId ??
+                                0, // Garante que não seja nulo
+                            accountTypeId: transaction.accountTypeId ??
+                                0, // Garante que não seja nulo
+                            accountTypeName: transaction.accountTypeName ??
+                                'Sem Tipo de Conta',
                           );
                         },
                       );
@@ -375,8 +385,7 @@ class HomePage extends StatelessWidget {
                   const SizedBox(height: 16.0),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 16.0),
-                    color: AppColors.backgroundCard, // Cor de fundo
+                        vertical: 8.0, horizontal: 16.0), // Cor de fundo
                     child: Row(
                       children: [
                         Expanded(
@@ -384,7 +393,7 @@ class HomePage extends StatelessWidget {
                             alignment: Alignment
                                 .centerLeft, // Alinha o texto à esquerda
                             child: const Text(
-                              'Últimas Transações por Tipo de Conta',
+                              'Últimas Transações - Minha Carteira',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.0,
@@ -416,10 +425,18 @@ class HomePage extends StatelessWidget {
                         shrinkWrap: true,
                         itemCount: snapshot.data?.length ?? 0,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(snapshot.data![index].description),
-                            subtitle:
-                                Text('R\$ ${snapshot.data![index].amount}'),
+                          final transaction = snapshot.data![index];
+                          return CardHome(
+                            description: transaction.description,
+                            date: transaction.date,
+                            amount: transaction.amount,
+                            methodPayment: transaction.paymentMethod,
+                            categoryId: transaction.categoryId ??
+                                0, // Garante que não seja nulo
+                            accountTypeId: transaction.accountTypeId ??
+                                0, // Garante que não seja nulo
+                            accountTypeName: transaction.accountTypeName ??
+                                'Sem Tipo de Conta',
                           );
                         },
                       );

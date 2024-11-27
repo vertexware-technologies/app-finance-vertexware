@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:novo/controllers/auth_controller.dart';
 import 'package:novo/models/transaction.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
