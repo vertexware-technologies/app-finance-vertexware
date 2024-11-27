@@ -1,6 +1,7 @@
 import 'package:novo/views/add_transaction_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:novo/views/home_page.dart';
 import 'package:provider/provider.dart';
 import '../controllers/transaction_controller.dart';
 import '../widgets/card_transaction.dart';
@@ -83,31 +84,20 @@ class ListTransactionPage extends StatelessWidget {
                 accountTypeName: transaction.accountTypeName,
                 onDelete: () async {
                   try {
-                    // Remove o item localmente antes de chamar a API
-                    controller.transactions
-                        .removeWhere((item) => item.id == transaction.id);
-
-                    // Chama a API para excluir a transação
-                    await controller.deleteTransaction(transaction.id ?? 0);
-
-                    // Exibe mensagem de sucesso
+                    await controller.deleteTransaction(transaction.id!);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text('Transação excluída com sucesso!'),
                         backgroundColor: Colors.green,
                       ),
                     );
                   } catch (e) {
-                    // Exibe mensagem de erro
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Erro ao excluir transação: $e'),
                         backgroundColor: Colors.red,
                       ),
                     );
-
-                    // (Opcional) Caso o backend falhe, recarrega os dados para corrigir
-                    await controller.fetchData();
                   }
                 },
 

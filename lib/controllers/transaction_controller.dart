@@ -145,13 +145,8 @@ class TransactionController extends ChangeNotifier {
   Future<void> deleteTransaction(int transactionId) async {
     try {
       await _transactionService.deleteTransaction(transactionId);
-      print('Transação excluída com sucesso');
-
-      // Atualiza os dados após exclusão
-      await fetchData();
-      await loadTransactions();
-
-      // Notifica ouvintes para atualizar a interface
+      _transactions
+          .removeWhere((transaction) => transaction.id == transactionId);
       notifyListeners();
     } catch (e) {
       print('Erro ao excluir transação: $e');
